@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import api from '../api';
+import { Link } from 'react-router-dom';
+import api, { getImageUrl } from '../api';
 
 const OrderHistory = () => {
     const [orders, setOrders] = useState([]);
@@ -20,14 +21,19 @@ const OrderHistory = () => {
     }, []);
 
     if (loading) return (
-        <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        <div className="flex justify-center items-center min-h-screen bg-gray-50">
+            <div className="animate-spin rounded-full h-14 w-14 border-t-4 border-b-4 border-primary"></div>
         </div>
     );
 
     return (
-        <div className="container mx-auto px-4 py-8">
-            <h1 className="text-3xl font-extrabold mb-8 text-gray-800 border-b pb-4">My Orders</h1>
+        <div className="bg-gray-50 min-h-screen pt-24 pb-16">
+            <div className="container mx-auto px-4 md:px-6">
+                <div className="mb-8">
+                    <Link to="/" className="text-sm text-gray-500 hover:text-primary transition font-medium">← Back to Home</Link>
+                    <h1 className="text-3xl font-extrabold mt-2 text-gray-900">My Orders</h1>
+                    <p className="text-gray-500 text-sm mt-1">{orders.length} {orders.length === 1 ? 'order' : 'orders'} placed</p>
+                </div>
 
             {orders.length === 0 ? (
                 <div className="text-center py-16 bg-gray-50 rounded-xl border border-dashed border-gray-300">
@@ -69,9 +75,13 @@ const OrderHistory = () => {
                                 <div className="space-y-6">
                                     {order.items.map(item => (
                                         <div key={item.id} className="flex flex-col sm:flex-row items-center sm:items-start gap-4 pb-6 border-b border-gray-100 last:border-0 last:pb-0">
-                                            {/* Image placeholder since it's not in the serializer, relying on product name and details */}
-                                            <div className="w-20 h-20 bg-gray-100 rounded-lg flex-shrink-0 flex items-center justify-center text-gray-400">
-                                                No Img
+                                            <div className="w-20 h-20 bg-gray-100 rounded-lg flex-shrink-0 overflow-hidden">
+                                                <img
+                                                    src={getImageUrl(item.product.image)}
+                                                    alt={item.product.name}
+                                                    className="w-full h-full object-cover"
+                                                    onError={(e) => { e.target.style.display = 'none'; }}
+                                                />
                                             </div>
 
                                             <div className="flex-grow text-center sm:text-left">
@@ -83,7 +93,7 @@ const OrderHistory = () => {
                                             </div>
 
                                             <div className="text-right">
-                                                <a href={`/products/${item.product.id}`} className="text-primary hover:text-secondary text-sm font-semibold hover:underline">View Product</a>
+                                                <a href={`/products/${item.product.slug}`} className="text-primary hover:text-secondary text-sm font-semibold hover:underline">View Product</a>
                                             </div>
                                         </div>
                                     ))}
@@ -107,6 +117,7 @@ const OrderHistory = () => {
                     ))}
                 </div>
             )}
+            </div>
         </div>
     );
 };

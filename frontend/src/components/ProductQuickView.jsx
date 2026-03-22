@@ -9,11 +9,13 @@ import api from '../api';
 const ProductQuickView = ({ product, onClose }) => {
     if (!product) return null;
 
+    const { fetchCart } = useContext(CartContext);
+
     const addToCart = async () => {
         try {
             await api.post('cart/add/', { product_id: product.id, quantity: 1 });
             toast.success('Added to cart!');
-            // Ideally update cart context here if not auto-updated
+            fetchCart();
         } catch {
             toast.error('Please login to add to cart.');
         }

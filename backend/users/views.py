@@ -1,14 +1,13 @@
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login, logout
 from .serializers import UserSerializer, RegisterSerializer
 
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [permissions.AllowAny]
-
-from rest_framework.authtoken.models import Token
 
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]

@@ -1,6 +1,7 @@
 from rest_framework import generics, permissions, status, views
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from .models import Order, OrderItem, Cart, CartItem
 from products.models import Product
@@ -50,7 +51,7 @@ class UpdateCartItemView(views.APIView):
         
         if quantity > 0:
             if quantity > cart_item.product.stock:
-                 return Response({'error': f'Only {cart_item.product.stock} items in stock'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': f'Only {cart_item.product.stock} items in stock'}, status=status.HTTP_400_BAD_REQUEST)
             cart_item.quantity = quantity
             cart_item.save()
         else:
@@ -68,7 +69,14 @@ class OrderCreateView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        cart = Cart.objects.get(user=self.request.user)
+        try:
+            cart = Cart.objects.get(user=self.request.user)
+        except Cart.DoesNotExist:
+            raise ValidationError({'error': 'No cart found for this user.'})
+
+        if not cart.items.exists():
+            raise ValidationError({'error': 'Cart is empty.'})
+
         total_amount = sum(item.total_price for item in cart.items.all())
         order = serializer.save(user=self.request.user, total_amount=total_amount)
         
@@ -95,18 +103,24 @@ class RazorpayOrderCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        cart = Cart.objects.get(user=request.user)
+        try:
+            cart = Cart.objects.get(user=request.user)
+        except Cart.DoesNotExist:
+            return Response({'error': 'No cart found'}, status=status.HTTP_400_BAD_REQUEST)
+
         if not cart.items.exists():
             return Response({'error': 'Cart is empty'}, status=status.HTTP_400_BAD_REQUEST)
 
         amount = sum(item.total_price for item in cart.items.all())
-        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
-        
-        payment = client.order.create({
-            "amount": int(amount * 100), # Amount in paise
-            "currency": "INR",
-            "payment_capture": "1"
-        })
+        try:
+            client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+            payment = client.order.create({
+                "amount": int(amount * 100),  # Amount in paise
+                "currency": "INR",
+                "payment_capture": "1"
+            })
+        except Exception as e:
+            return Response({'error': f'Razorpay error: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response({
             'order_id': payment['id'],
@@ -130,7 +144,11 @@ class RazorpayPaymentVerifyView(APIView):
             client.utility.verify_payment_signature(params_dict)
 
             # Payment verified, create order
-            cart = Cart.objects.get(user=request.user)
+            try:
+                cart = Cart.objects.get(user=request.user)
+            except Cart.DoesNotExist:
+                return Response({'error': 'Cart not found'}, status=status.HTTP_400_BAD_REQUEST)
+
             total_amount = sum(item.total_price for item in cart.items.all())
             
             order = Order.objects.create(
@@ -158,6 +176,6 @@ class RazorpayPaymentVerifyView(APIView):
             return Response({'status': 'Payment verified and Order created'}, status=status.HTTP_201_CREATED)
 
         except razorpay.errors.SignatureVerificationError:
-             return Response({'error': 'Payment verification failed'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Payment verification failed'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

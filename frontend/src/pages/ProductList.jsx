@@ -57,22 +57,7 @@ const ProductList = () => {
         fetchData();
     }, [searchQuery, selectedCategory]);
 
-    // Fetch categories separately if needed, but trying to do it in one go above. 
-    // Actually, let's keep it simple and just fetch products for now, and add category fetching if we confirm the endpoint.
-    // I saw `CategoryListView` in views.py so `categories/` should work if URL is hooked up. 
 
-    // Let's refine the effect to be safer
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const res = await api.get('categories/');
-                setCategories(res.data);
-            } catch (err) {
-                console.log("Categories not found", err);
-            }
-        }
-        fetchCategories();
-    }, []);
 
 
     if (loading) return (

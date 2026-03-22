@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import { toast } from 'react-toastify';
 import CartContext from '../context/CartContext';
+import AuthContext from '../context/AuthContext';
 
 const Checkout = () => {
     const { cart, fetchCart } = useContext(CartContext);
+    const { user } = useContext(AuthContext);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [address, setAddress] = useState('');
@@ -86,7 +88,7 @@ const Checkout = () => {
                 },
                 prefill: {
                     name: fullName,
-                    email: "user@example.com", // You might want to get this from user context if available
+                    email: user?.email || 'user@example.com',
                     contact: "9999999999"
                 },
                 notes: {

@@ -52,7 +52,7 @@ const Wishlist = () => {
         return (
             <div className="container mx-auto px-4 py-20 text-center">
                 <h2 className="text-3xl font-bold mb-4 text-gray-800">Your wishlist is empty</h2>
-                <p className="text-gray-600 mb-8">Save items you love to verify them later.</p>
+                <p className="text-gray-600 mb-8">Save items you love to view them later.</p>
                 <Link to="/products" className="bg-primary text-white px-8 py-3 rounded-full font-bold hover:bg-secondary transition-colors">
                     Start Shopping
                 </Link>

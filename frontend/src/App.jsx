@@ -3,6 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import WhatsAppButton from './components/WhatsAppButton';
 import Home from './pages/Home';
 import About from './pages/About';
 import Testimonials from './pages/Testimonials';
@@ -29,7 +30,7 @@ function App() {
         <CartProvider>
           <div className="flex flex-col min-h-screen">
             <Navbar />
-            <main className="flex-grow container mx-auto px-4 py-8 pt-24">
+            <main className="flex-grow">
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/about" element={<About />} />
@@ -49,7 +50,8 @@ function App() {
               </Routes>
             </main>
             <Footer />
-            <ToastContainer />
+            <WhatsAppButton />
+            <ToastContainer position="bottom-right" autoClose={3000} />
           </div>
         </CartProvider>
       </AuthProvider>

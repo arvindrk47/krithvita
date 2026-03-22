@@ -149,3 +149,8 @@ CORS_ALLOW_ALL_ORIGINS = True # For development
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Razorpay Payment Gateway
+# Replace with your actual Razorpay test keys from https://dashboard.razorpay.com/
+RAZORPAY_KEY_ID = 'rzp_test_XXXXXXXXXXXXXXXX'
+RAZORPAY_KEY_SECRET = 'XXXXXXXXXXXXXXXXXXXXXXXX'

@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from rest_framework import serializers
 from .models import Category, Product, Wishlist
 
 class CategorySerializer(serializers.ModelSerializer):

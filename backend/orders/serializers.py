@@ -36,5 +36,5 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['id', 'status', 'total_amount', 'shipping_address', 'created_at', 'items']
-        read_only_fields = ['status', 'total_amount', 'created_at', 'items']
+        fields = ['id', 'status', 'total_amount', 'shipping_address', 'created_at', 'items', 'razorpay_order_id', 'razorpay_payment_id']
+        read_only_fields = ['status', 'total_amount', 'created_at', 'items', 'razorpay_order_id', 'razorpay_payment_id']

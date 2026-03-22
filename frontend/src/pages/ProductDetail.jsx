@@ -65,7 +65,7 @@ const ProductDetail = () => {
             toast.success('Added to cart!');
             fetchCart();
         } catch {
-            toast.error('Please login to use wishlist.');
+            toast.error('Please login to add to cart.');
         }
     };
 
