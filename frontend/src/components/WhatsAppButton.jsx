@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
 import { FaWhatsapp, FaTimes } from 'react-icons/fa';
 
-// ⚠️ Replace this with your actual WhatsApp number (include country code, no + or spaces)
-// Example: India +91 98765 43210 → '919876543210'
-const WHATSAPP_NUMBER = '919876543210';
-const WHATSAPP_MESSAGE = 'Hi! I have a question about your products. 🌿';
+// WhatsApp API URL provided by the user
+const WHATSAPP_URL = 'https://api.whatsapp.com/send/?phone=919080983230&text=Hi%20I%20am%20interested%20in%20your%20health%20mix%20products.%20Can%20you%20share%20details%20and%20price%3F&type=phone_number&app_absent=0&utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAb21jcAQsy9dleHRuA2FlbQIxMQBzcnRjBmFwcF9pZA81NjcwNjczNDMzNTI0MjcAAaeKNC94xOQKQGKYqay_-fEWm7mvNNyKayAGorl2LL0Xfo3kT4gpErtWewl-dg_aem_0YOA4zXVN_N1kKrUCEWNuA';
 
 const WhatsAppButton = () => {
     const [showTooltip, setShowTooltip] = useState(false);
@@ -17,17 +15,14 @@ const WhatsAppButton = () => {
     }, []);
 
     const handleClick = () => {
-        const encodedMessage = encodeURIComponent(WHATSAPP_MESSAGE);
-        const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
-        window.open(url, '_blank', 'noopener,noreferrer');
+        window.open(WHATSAPP_URL, '_blank', 'noopener,noreferrer');
     };
 
     return (
         <div
             style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 99999 }}
-            className={`flex flex-col items-end gap-3 transition-opacity duration-500 ${
-                visible ? 'opacity-100' : 'opacity-0'
-            }`}
+            className={`flex flex-col items-end gap-3 transition-opacity duration-500 ${visible ? 'opacity-100' : 'opacity-0'
+                }`}
         >
             {/* Tooltip / Chat bubble */}
             {showTooltip && (
@@ -53,8 +48,8 @@ const WhatsAppButton = () => {
             >
                 <FaWhatsapp size={30} className="relative z-10" />
                 {/* Pulse ring */}
-                <span 
-                    className="absolute inset-0 rounded-full animate-ping" 
+                <span
+                    className="absolute inset-0 rounded-full animate-ping"
                     style={{ backgroundColor: '#25D366', opacity: 0.4 }}
                 />
             </button>
